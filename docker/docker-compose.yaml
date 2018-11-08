@@ -15,17 +15,17 @@ services:
       - dynomite:dyno1
       - rabbitmq
 
-  # conductor-ui:
-  #   environment:
-  #     - WF_SERVER=http://conductor-server:8080/api/
-  #   image: patrickbadley/netflix-conductor-ui:2.0.1-rabbitmq
-  #   build:
-  #     context: ../
-  #     dockerfile: docker/ui/Dockerfile
-  #   ports:
-  #     - 5000:5000
-  #   links:
-  #     - conductor-server
+  conductor-ui:
+    environment:
+      - WF_SERVER=http://conductor-server:8080/api/
+    image: patrickbadley/netflix-conductor-ui:2.0.1-rabbitmq
+    build:
+      context: ../
+      dockerfile: docker/ui/Dockerfile
+    ports:
+      - 5000:5000
+    links:
+      - conductor-server
 
   dynomite:
     image: v1r3n/dynomite

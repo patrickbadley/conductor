@@ -53,6 +53,7 @@ public class ContribsModule extends AbstractModule {
 		//bind(SQSEventQueueProvider.class).asEagerSingleton();
 	}
 
+
 	@ProvidesIntoMap
 	@StringMapKey("sqs")
 	@Singleton
@@ -60,6 +61,8 @@ public class ContribsModule extends AbstractModule {
 	public EventQueueProvider getSQSEventQueueProvider(AmazonSQSClient amazonSQSClient, Configuration config) {
 		return new SQSEventQueueProvider(amazonSQSClient, config);
 	}
+
+
 
 	@Provides
 	public AmazonSQSClient getSQSClient(AWSCredentialsProvider acp) {
