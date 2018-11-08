@@ -40,8 +40,11 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
- * @author Viren
+ * @author Patrick Badley
  *
  */
 public class RabbitMqObservableQueue implements ObservableQueue {
@@ -52,15 +55,13 @@ public class RabbitMqObservableQueue implements ObservableQueue {
 
 	private String queueName;
 
-	private RabbitMqObservableQueue(String queueName)//, AmazonRabbitMqClient client, int visibilityTimeoutInSeconds, int batchSize, int pollTimeInMS, List<String> accountsToAuthorize) {
+	private RabbitMqObservableQueue(String queueName)
 	{
 		this.queueName = queueName;
-		logger.info(this.getType() + " Created!");
 	}
 
 	@Override
 	public Observable<Message> observe() {
-//		OnSubscribe<Message> subscriber = getOnSubscribe();
 		return Observable.empty();
 	}
 
@@ -92,31 +93,13 @@ public class RabbitMqObservableQueue implements ObservableQueue {
 		}
 	}
 
-	// String toJson(Object value) {
-    //     try {
-    //         return objectMapper.writeValueAsString(value);
-    //     } catch (JsonProcessingException e) {
-    //         throw new RuntimeException(e);
-    //     }
-    // }
-
 	@Override
 	public long size() {
-		// GetQueueAttributesResult attributes = client.getQueueAttributes(queueURL, Collections.singletonList("ApproximateNumberOfMessages"));
-		// String sizeAsStr = attributes.getAttributes().get("ApproximateNumberOfMessages");
-		// try {
-		// 	return Long.parseLong(sizeAsStr);
-		// } catch(Exception e) {
-		// 	return -1;
-		// }
 		return 0;
 	}
 
 	@Override
 	public void setUnackTimeout(Message message, long unackTimeout) {
-		// int unackTimeoutInSeconds = (int) (unackTimeout / 1000);
-		// ChangeMessageVisibilityRequest request = new ChangeMessageVisibilityRequest(queueURL, message.getReceipt(), unackTimeoutInSeconds);
-		// client.changeMessageVisibility(request);
 	}
 
 	@Override
@@ -138,16 +121,6 @@ public class RabbitMqObservableQueue implements ObservableQueue {
 
 		private String queueName;
 
-		private int visibilityTimeout = 30;	//seconds
-
-		private int batchSize = 5;
-
-		private int pollTimeInMS = 100;
-
-//		private AmazonRabbitMqClient client;
-
-		private List<String> accountsToAuthorize = new LinkedList<>();
-
 		public Builder withQueueName(String queueName) {
 			this.queueName = queueName;
 			return this;
@@ -157,121 +130,4 @@ public class RabbitMqObservableQueue implements ObservableQueue {
 			return new RabbitMqObservableQueue(queueName);
 		}
 	}
-
-	// //Private methods
-	// @VisibleForTesting
-	// String getOrCreateQueue() {
-    //     List<String> queueUrls = listQueues(queueName);
-	// 	if (queueUrls == null || queueUrls.isEmpty()) {
-    //         CreateQueueRequest createQueueRequest = new CreateQueueRequest().withQueueName(queueName);
-    //         CreateQueueResult result = client.createQueue(createQueueRequest);
-    //         return result.getQueueUrl();
-	// 	} else {
-    //         return queueUrls.get(0);
-    //     }
-    // }
-
-	// private String getQueueARN() {
-	// 	GetQueueAttributesResult response = client.getQueueAttributes(queueURL, Collections.singletonList("QueueArn"));
-	// 	return response.getAttributes().get("QueueArn");
-	// }
-
-	// private void addPolicy(List<String> accountsToAuthorize) {
-	// 	if(accountsToAuthorize == null || accountsToAuthorize.isEmpty()) {
-	// 		logger.info("No additional security policies attached for the queue " + queueName);
-	// 		return;
-	// 	}
-	// 	logger.info("Authorizing " + accountsToAuthorize + " to the queue " + queueName);
-	// 	Map<String, String> attributes = new HashMap<>();
-	// 	attributes.put("Policy", getPolicy(accountsToAuthorize));
-	// 	SetQueueAttributesResult result = client.setQueueAttributes(queueURL, attributes);
-	// 	logger.info("policy attachment result: " + result);
-	// 	logger.info("policy attachment result: status=" + result.getSdkHttpMetadata().getHttpStatusCode());
-	// }
-
-	// private String getPolicy(List<String> accountIds) {
-	// 	Policy policy = new Policy("AuthorizedWorkerAccessPolicy");
-	// 	Statement stmt = new Statement(Effect.Allow);
-	// 	Action action = RabbitMqActions.SendMessage;
-	// 	stmt.getActions().add(action);
-	// 	stmt.setResources(new LinkedList<>());
-	// 	for(String accountId : accountIds) {
-	// 		Principal principal = new Principal(accountId);
-	// 		stmt.getPrincipals().add(principal);
-	// 	}
-	// 	stmt.getResources().add(new Resource(getQueueARN()));
-	// 	policy.getStatements().add(stmt);
-	// 	return policy.toJson();
-	// }
-
-	// private List<String> listQueues(String queueName) {
-    //     ListQueuesRequest listQueuesRequest = new ListQueuesRequest().withQueueNamePrefix(queueName);
-    //     ListQueuesResult resultList = client.listQueues(listQueuesRequest);
-    //     return resultList.getQueueUrls().stream()
-	// 			.filter(queueUrl -> queueUrl.contains(queueName))
-	// 			.collect(Collectors.toList());
-    // }
-
-	// private void publishMessages(List<Message> messages) {
-	// 	logger.info("Sending {} messages to the RabbitMq queue: {}", messages.size(), queueName);
-	// 	SendMessageBatchRequest batch = new SendMessageBatchRequest(queueURL);
-	// 	messages.forEach(msg -> {
-	// 		SendMessageBatchRequestEntry sendr = new SendMessageBatchRequestEntry(msg.getId(), msg.getPayload());
-	// 		batch.getEntries().add(sendr);
-	// 	});
-	// 	logger.info("sending {} messages in batch", batch.getEntries().size());
-	// 	SendMessageBatchResult result = client.sendMessageBatch(batch);
-	// 	logger.info("send result: {} for RabbitMq queue: {}", result.getFailed().toString(), queueName);
-	// }
-
-	// @VisibleForTesting
-	// List<Message> receiveMessages() {
-	// 	try {
-	// 		ReceiveMessageRequest receiveMessageRequest = new ReceiveMessageRequest()
-	// 				.withQueueUrl(queueURL)
-	// 				.withVisibilityTimeout(visibilityTimeoutInSeconds)
-	// 				.withMaxNumberOfMessages(batchSize);
-
-	// 		ReceiveMessageResult result = client.receiveMessage(receiveMessageRequest);
-
-	// 		List<Message> messages = result.getMessages().stream()
-	// 				.map(msg -> new Message(msg.getMessageId(), msg.getBody(), msg.getReceiptHandle()))
-	// 				.collect(Collectors.toList());
-	// 		Monitors.recordEventQueueMessagesProcessed(QUEUE_TYPE, this.queueName, messages.size());
-	// 		return messages;
-	// 	} catch (Exception e) {
-	// 		logger.error("Exception while getting messages from RabbitMq", e);
-	// 		Monitors.recordObservableQMessageReceivedErrors(QUEUE_TYPE);
-	// 	}
-	// 	return new ArrayList<>();
-	// }
-
-	// @VisibleForTesting
-	// OnSubscribe<Message> getOnSubscribe() {
-	// 	return subscriber -> {
-	// 		Observable<Long> interval = Observable.interval(pollTimeInMS, TimeUnit.MILLISECONDS);
-	// 		interval.flatMap((Long x)->{
-	// 			List<Message> msgs = receiveMessages();
-	// 	        return Observable.from(msgs);
-	// 		}).subscribe(subscriber::onNext, subscriber::onError);
-	// 	};
-	// }
-
-	// private List<String> delete(List<Message> messages) {
-	// 	if (messages == null || messages.isEmpty()) {
-    //         return null;
-    //     }
-
-    //     DeleteMessageBatchRequest batch = new DeleteMessageBatchRequest().withQueueUrl(queueURL);
-    // 	List<DeleteMessageBatchRequestEntry> entries = batch.getEntries();
-
-    //     messages.forEach(m -> entries.add(new DeleteMessageBatchRequestEntry().withId(m.getId()).withReceiptHandle(m.getReceipt())));
-
-    //     DeleteMessageBatchResult result = client.deleteMessageBatch(batch);
-    //     List<String> failures = result.getFailed().stream()
-	// 			.map(BatchResultErrorEntry::getId)
-	// 			.collect(Collectors.toList());
-	// 	logger.debug("Failed to delete messages from queue: {}: {}", queueName, failures);
-    //     return failures;
-    // }
 }

@@ -23,8 +23,8 @@ import static com.netflix.conductor.core.events.EventQueues.EVENT_QUEUE_PROVIDER
 import java.util.HashMap;
 import java.util.Map;
 
-// import com.amazonaws.auth.AWSCredentialsProvider;
-// import com.amazonaws.services.sqs.AmazonSQSClient;
+import com.amazonaws.auth.AWSCredentialsProvider;
+import com.amazonaws.services.sqs.AmazonSQSClient;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
@@ -41,26 +41,14 @@ import com.netflix.conductor.core.events.queue.ObservableQueue;
 import com.netflix.conductor.core.events.rabbitmq.RabbitMqEventQueueProvider;
 import com.netflix.conductor.core.events.sqs.SQSEventQueueProvider;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * @author Viren
  *
  */
 public class ContribsModule extends AbstractModule {
-    private static final Logger logger = LoggerFactory.getLogger(ContribsModule.class);
-
 	@Override
 	protected void configure() {
-
-		logger.info("Starting ContribsModule");
-
-//		bind(QueueManager.class).asEagerSingleton();
-		//bind(SQSEventQueueProvider.class).asEagerSingleton();
-//		bind(RabbitMqEventQueueProvider.class).asEagerSingleton();
 	}
-
 
 	// @ProvidesIntoMap
 	// @StringMapKey("sqs")

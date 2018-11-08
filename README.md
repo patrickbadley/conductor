@@ -80,3 +80,7 @@ com.netflix.conductor.dao.RedisWorkflowModule
 ## Get Support
 Conductor is maintained by Media Workflow Infrastructure team at Netflix.  Use github issue tracking for any support request.  
 
+## Other build Notes (Docker-compose):
+./gradlew.bat build
+
+docker-compose -f docker/docker-compose.yaml build

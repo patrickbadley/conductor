@@ -24,32 +24,26 @@ import com.netflix.conductor.core.config.Configuration;
 import com.netflix.conductor.core.events.EventQueueProvider;
 import com.netflix.conductor.core.events.queue.ObservableQueue;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * @author Viren
+ * @author Patrick Badley
  *
  */
 @Singleton
 public class RabbitMqEventQueueProvider implements EventQueueProvider {
-	private static Logger logger = LoggerFactory.getLogger(RabbitMqEventQueueProvider.class);
 
 	private final Map<String, ObservableQueue> queues = new ConcurrentHashMap<>();
 
 	@Inject
 	public RabbitMqEventQueueProvider(Configuration config) {
-		logger.info("RabbitMqEventQueueProvider Created!");
 	}
 
 	@Override
 	public ObservableQueue getQueue(String queueURI) {
-		logger.info("RabbitMqEventQueueProvider getting queue: " + queueURI);
 		return queues.computeIfAbsent(queueURI, q -> {
 			Builder builder = new RabbitMqObservableQueue.Builder();
 			return builder

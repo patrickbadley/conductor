@@ -27,15 +27,10 @@ import com.netflix.conductor.contribs.ContribsModule;
 
 import java.util.concurrent.ExecutorService;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * @author Viren
  */
 public class ServerModule extends AbstractModule {
-    private static final Logger logger = LoggerFactory.getLogger(ContribsModule.class);
-
     @Override
     protected void configure() {
         install(new CoreModule());
@@ -44,8 +39,6 @@ public class ServerModule extends AbstractModule {
         install(new JettyModule());
         install(new GRPCModule());
         install(new ContribsModule());
-
-		logger.info("Finished ContribsModule");
 
         bind(ObjectMapper.class).toProvider(JsonMapperProvider.class);
         bind(Configuration.class).to(SystemPropertiesDynomiteConfiguration.class);
