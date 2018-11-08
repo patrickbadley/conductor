@@ -23,8 +23,8 @@ import static com.netflix.conductor.core.events.EventQueues.EVENT_QUEUE_PROVIDER
 import java.util.HashMap;
 import java.util.Map;
 
-import com.amazonaws.auth.AWSCredentialsProvider;
-import com.amazonaws.services.sqs.AmazonSQSClient;
+// import com.amazonaws.auth.AWSCredentialsProvider;
+// import com.amazonaws.services.sqs.AmazonSQSClient;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
@@ -38,63 +38,77 @@ import com.netflix.conductor.contribs.queue.sqs.SQSObservableQueue.Builder;
 import com.netflix.conductor.core.config.Configuration;
 import com.netflix.conductor.core.events.EventQueueProvider;
 import com.netflix.conductor.core.events.queue.ObservableQueue;
+import com.netflix.conductor.core.events.rabbitmq.RabbitMqEventQueueProvider;
 import com.netflix.conductor.core.events.sqs.SQSEventQueueProvider;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Viren
  *
  */
 public class ContribsModule extends AbstractModule {
+    private static final Logger logger = LoggerFactory.getLogger(ContribsModule.class);
 
 	@Override
 	protected void configure() {
-		bind(QueueManager.class).asEagerSingleton();
+
+		logger.info("Starting ContribsModule");
+
+//		bind(QueueManager.class).asEagerSingleton();
 		//bind(SQSEventQueueProvider.class).asEagerSingleton();
+//		bind(RabbitMqEventQueueProvider.class).asEagerSingleton();
 	}
 
+
+	// @ProvidesIntoMap
+	// @StringMapKey("sqs")
+	// @Singleton
+	// @Named(EVENT_QUEUE_PROVIDERS_QUALIFIER)
+	// public EventQueueProvider getSQSEventQueueProvider(AmazonSQSClient amazonSQSClient, Configuration config) {
+	// 	return new SQSEventQueueProvider(amazonSQSClient, config);
+	// }
 
 	@ProvidesIntoMap
-	@StringMapKey("sqs")
+	@StringMapKey("rabbitmq")
 	@Singleton
 	@Named(EVENT_QUEUE_PROVIDERS_QUALIFIER)
-	public EventQueueProvider getSQSEventQueueProvider(AmazonSQSClient amazonSQSClient, Configuration config) {
-		return new SQSEventQueueProvider(amazonSQSClient, config);
+	public EventQueueProvider getRabbitMqEventQueueProvider(Configuration config) {
+		return new RabbitMqEventQueueProvider(config);
 	}
 
-
-
-	@Provides
-	public AmazonSQSClient getSQSClient(AWSCredentialsProvider acp) {
-		return new AmazonSQSClient(acp);
-	}
+	// @Provides
+	// public AmazonSQSClient getSQSClient(AWSCredentialsProvider acp) {
+	// 	return new AmazonSQSClient(acp);
+	// }
 	
-	@Provides
-	public Map<Status, ObservableQueue> getQueues(Configuration config, AWSCredentialsProvider acp) {
+	// @Provides
+	// public Map<Status, ObservableQueue> getQueues(Configuration config, AWSCredentialsProvider acp) {
 		
-		String stack = "";
-		if(config.getStack() != null && config.getStack().length() > 0) {
-			stack = config.getStack() + "_";
-		}
-		Status[] statuses = new Status[]{Status.COMPLETED, Status.FAILED};
-		Map<Status, ObservableQueue> queues = new HashMap<>();
-		for(Status status : statuses) {
-			String queueName = config.getProperty("workflow.listener.queue.prefix", config.getAppId() + "_sqs_notify_" + stack + status.name());
-			AmazonSQSClient client = new AmazonSQSClient(acp);
-			Builder builder = new SQSObservableQueue.Builder().withClient(client).withQueueName(queueName);
+	// 	String stack = "";
+	// 	if(config.getStack() != null && config.getStack().length() > 0) {
+	// 		stack = config.getStack() + "_";
+	// 	}
+	// 	Status[] statuses = new Status[]{Status.COMPLETED, Status.FAILED};
+	// 	Map<Status, ObservableQueue> queues = new HashMap<>();
+	// 	for(Status status : statuses) {
+	// 		String queueName = config.getProperty("workflow.listener.queue.prefix", config.getAppId() + "_sqs_notify_" + stack + status.name());
+	// 		AmazonSQSClient client = new AmazonSQSClient(acp);
+	// 		Builder builder = new SQSObservableQueue.Builder().withClient(client).withQueueName(queueName);
 			
-			String auth = config.getProperty("workflow.listener.queue.authorizedAccounts", "");
-			String[] accounts = auth.split(",");
-			for(String accountToAuthorize : accounts) {
-				accountToAuthorize = accountToAuthorize.trim();
-				if(accountToAuthorize.length() > 0) {
-					builder.addAccountToAuthorize(accountToAuthorize.trim());
-				}
-			}
-			ObservableQueue queue = builder.build();
-			queues.put(status, queue);
-		}
+	// 		String auth = config.getProperty("workflow.listener.queue.authorizedAccounts", "");
+	// 		String[] accounts = auth.split(",");
+	// 		for(String accountToAuthorize : accounts) {
+	// 			accountToAuthorize = accountToAuthorize.trim();
+	// 			if(accountToAuthorize.length() > 0) {
+	// 				builder.addAccountToAuthorize(accountToAuthorize.trim());
+	// 			}
+	// 		}
+	// 		ObservableQueue queue = builder.build();
+	// 		queues.put(status, queue);
+	// 	}
 		
-		return queues;
-	}
+	// 	return queues;
+	// }
 }

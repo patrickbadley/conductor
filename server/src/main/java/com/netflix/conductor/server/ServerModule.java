@@ -23,13 +23,18 @@ import com.netflix.conductor.dyno.SystemPropertiesDynomiteConfiguration;
 import com.netflix.conductor.grpc.server.GRPCModule;
 import com.netflix.conductor.jetty.server.JettyModule;
 import com.netflix.runtime.health.guice.HealthModule;
+import com.netflix.conductor.contribs.ContribsModule;
 
 import java.util.concurrent.ExecutorService;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Viren
  */
 public class ServerModule extends AbstractModule {
+    private static final Logger logger = LoggerFactory.getLogger(ContribsModule.class);
 
     @Override
     protected void configure() {
@@ -38,6 +43,9 @@ public class ServerModule extends AbstractModule {
         install(new HealthModule());
         install(new JettyModule());
         install(new GRPCModule());
+        install(new ContribsModule());
+
+		logger.info("Finished ContribsModule");
 
         bind(ObjectMapper.class).toProvider(JsonMapperProvider.class);
         bind(Configuration.class).to(SystemPropertiesDynomiteConfiguration.class);

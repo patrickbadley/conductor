@@ -46,7 +46,15 @@ public class EventQueues {
 
 	@Inject
 	public EventQueues(@Named(EVENT_QUEUE_PROVIDERS_QUALIFIER) Map<String, EventQueueProvider> providers, ParametersUtils parametersUtils) {
-	    this.providers = providers;
+
+		logger.info("PRINTING PROVIDERS-------------------------------------------------------------");
+		logger.info("PRINTING PROVIDERS-------------------------------------------------------------");
+
+		for (int i=0;i<providers.size();i++){
+			logger.info(providers.getClass().getName());
+		}
+
+		this.providers = providers;
 	    this.parametersUtils = parametersUtils;
 	}
 

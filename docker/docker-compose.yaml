@@ -4,7 +4,7 @@ services:
   conductor-server:
     environment:
       - CONFIG_PROP=config.properties
-    image: conductor:server
+    image: patrickbadley/netflix-conductor-server:2.0.1-rabbitmq11
     build:
       context: ../
       dockerfile: docker/server/Dockerfile
@@ -13,21 +13,32 @@ services:
     links:
       - elasticsearch:es
       - dynomite:dyno1
+      - rabbitmq
 
-  conductor-ui:
-    environment:
-      - WF_SERVER=http://conductor-server:8080/api/
-    image: conductor:ui
-    build:
-      context: ../
-      dockerfile: docker/ui/Dockerfile
-    ports:
-      - 5000:5000
-    links:
-      - conductor-server
+  # conductor-ui:
+  #   environment:
+  #     - WF_SERVER=http://conductor-server:8080/api/
+  #   image: patrickbadley/netflix-conductor-ui:2.0.1-rabbitmq
+  #   build:
+  #     context: ../
+  #     dockerfile: docker/ui/Dockerfile
+  #   ports:
+  #     - 5000:5000
+  #   links:
+  #     - conductor-server
 
   dynomite:
     image: v1r3n/dynomite
+    logging:
+      driver: none
 
   elasticsearch:
-    image: elasticsearch:2.4
+    image: elasticsearch:5.6.8
+    logging:
+      driver: none
+
+  rabbitmq:
+    image: rabbitmq:3.7-management
+    ports:
+      - 8081:8080
+      - 5672:5672

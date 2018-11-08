@@ -5,24 +5,24 @@ configurations.all {
 }
 dependencies {
 
-    testCompile project(':conductor-core')
-    testCompile project(':conductor-jersey')
-    testCompile project(':conductor-redis-persistence').sourceSets.test.output
-    testCompile project(':conductor-mysql-persistence').sourceSets.test.output
-    testCompile project(':conductor-client')
-    testCompile project(':conductor-server')
-    testCompile project(':conductor-grpc-client')
-    testCompile project(':conductor-grpc-server')
-    testCompile "org.elasticsearch:elasticsearch:${revElasticSearch5}"
-    testCompile "org.eclipse.jetty:jetty-server:${revJetteyServer}"
-    testCompile "org.eclipse.jetty:jetty-servlet:${revJettyServlet}"
-    testCompile "org.rarefiedredis.redis:redis-java:${revRarefiedRedis}"
-    testCompile "com.sun.jersey.contribs:jersey-guice:${revJerseyGuice}"
+    // testCompile project(':conductor-core')
+    // testCompile project(':conductor-jersey')
+    // testCompile project(':conductor-redis-persistence').sourceSets.test.output
+    // testCompile project(':conductor-mysql-persistence').sourceSets.test.output
+    // testCompile project(':conductor-client')
+    // testCompile project(':conductor-server')
+    // testCompile project(':conductor-grpc-client')
+    // testCompile project(':conductor-grpc-server')
+    // testCompile "org.elasticsearch:elasticsearch:${revElasticSearch5}"
+    // testCompile "org.eclipse.jetty:jetty-server:${revJetteyServer}"
+    // testCompile "org.eclipse.jetty:jetty-servlet:${revJettyServlet}"
+    // testCompile "org.rarefiedredis.redis:redis-java:${revRarefiedRedis}"
+    // testCompile "com.sun.jersey.contribs:jersey-guice:${revJerseyGuice}"
 
-    testCompile "com.google.inject.extensions:guice-servlet:${revGuiceServlet}"
-    testCompile "io.swagger:swagger-jersey-jaxrs:${revSwaggerJersey}"
+    // testCompile "com.google.inject.extensions:guice-servlet:${revGuiceServlet}"
+    // testCompile "io.swagger:swagger-jersey-jaxrs:${revSwaggerJersey}"
 
-    testCompile "ch.vorburger.mariaDB4j:mariaDB4j:${revMariaDB4j}"
+    // testCompile "ch.vorburger.mariaDB4j:mariaDB4j:${revMariaDB4j}"
 }
 
 test {
