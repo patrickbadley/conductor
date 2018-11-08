@@ -23,7 +23,7 @@ import com.netflix.conductor.dyno.SystemPropertiesDynomiteConfiguration;
 import com.netflix.conductor.grpc.server.GRPCModule;
 import com.netflix.conductor.jetty.server.JettyModule;
 import com.netflix.runtime.health.guice.HealthModule;
-import com.netflix.conductor.contribs.ContribsModule;
+import com.netflix.conductor.contribs.RabbitMqModule;
 
 import java.util.concurrent.ExecutorService;
 
@@ -38,7 +38,7 @@ public class ServerModule extends AbstractModule {
         install(new HealthModule());
         install(new JettyModule());
         install(new GRPCModule());
-        install(new ContribsModule());
+        install(new RabbitMqModule());
 
         bind(ObjectMapper.class).toProvider(JsonMapperProvider.class);
         bind(Configuration.class).to(SystemPropertiesDynomiteConfiguration.class);
