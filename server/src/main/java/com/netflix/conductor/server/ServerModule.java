@@ -31,6 +31,7 @@ import java.util.concurrent.ExecutorService;
  * @author Viren
  */
 public class ServerModule extends AbstractModule {
+
     @Override
     protected void configure() {
         install(new CoreModule());
