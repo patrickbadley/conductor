@@ -1,5 +1,5 @@
-# Docker compose for netflix conductor + elasticsearch + dynomite
-version: '2'
+version: '2.3'
+
 services:
   conductor-server:
     environment:
@@ -8,12 +8,20 @@ services:
     build:
       context: ../
       dockerfile: docker/server/Dockerfile
+    networks:
+      - internal
     ports:
       - 8080:8080
     links:
       - elasticsearch:es
       - dynomite:dyno1
-      - rabbitmq
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+      dynomite:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
 
   conductor-ui:
     environment:
@@ -22,6 +30,8 @@ services:
     build:
       context: ../
       dockerfile: docker/ui/Dockerfile
+    networks:
+      - internal
     ports:
       - 5000:5000
     links:
@@ -29,16 +39,40 @@ services:
 
   dynomite:
     image: v1r3n/dynomite
-    logging:
-      driver: none
+    networks:
+      - internal
+    ports:
+      - 8102:8102
+    healthcheck:
+      test: timeout 5 bash -c 'cat < /dev/null > /dev/tcp/localhost/8102'
+      interval: 5s
+      timeout: 5s
+      retries: 12
 
+  # https://www.elastic.co/guide/en/elasticsearch/reference/5.6/docker.html
   elasticsearch:
-    image: elasticsearch:5.6.8
-    logging:
-      driver: none
+    image: docker.elastic.co/elasticsearch/elasticsearch:5.6.8
+    environment:
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - transport.host=0.0.0.0
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    networks:
+      - internal
+    ports:
+      - 9200:9200
+      - 9300:9300
+    healthcheck:
+      test: timeout 5 bash -c 'cat < /dev/null > /dev/tcp/localhost/9300'
+      interval: 5s
+      timeout: 5s
+      retries: 12
 
   rabbitmq:
     image: rabbitmq:3.7-management
     ports:
       - 8081:8080
       - 5672:5672
+
+networks:
+  internal:

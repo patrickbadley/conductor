@@ -7,16 +7,17 @@ import com.netflix.conductor.contribs.http.HttpTask;
 import com.netflix.conductor.contribs.http.RestClientManager;
 import com.netflix.conductor.contribs.json.JsonJqTransform;
 import com.netflix.conductor.core.config.Configuration;
-import com.netflix.conductor.core.config.SystemPropertiesConfiguration;
+import com.netflix.conductor.core.execution.WorkflowExecutorModule;
 import com.netflix.conductor.core.utils.DummyPayloadStorage;
 import com.netflix.conductor.core.utils.S3PayloadStorage;
 import com.netflix.conductor.dao.RedisWorkflowModule;
-import com.netflix.conductor.elasticsearch.es5.ElasticSearchV5Module;
+import com.netflix.conductor.elasticsearch.ElasticSearchModule;
 import com.netflix.conductor.mysql.MySQLWorkflowModule;
 import com.netflix.conductor.server.DynomiteClusterModule;
 import com.netflix.conductor.server.JerseyModule;
 import com.netflix.conductor.server.LocalRedisModule;
 import com.netflix.conductor.server.RedisClusterModule;
+import com.netflix.conductor.server.RedisSentinelModule;
 import com.netflix.conductor.server.ServerModule;
 import com.netflix.conductor.server.SwaggerModule;
 import org.slf4j.Logger;
@@ -54,7 +55,7 @@ public class ModulesProvider implements Provider<List<AbstractModule>> {
     }
 
     private List<AbstractModule> selectModulesToLoad() {
-        Configuration.DB database = null;
+        Configuration.DB database;
         List<AbstractModule> modules = new ArrayList<>();
 
         try {
@@ -88,9 +89,16 @@ public class ModulesProvider implements Provider<List<AbstractModule>> {
                 modules.add(new RedisWorkflowModule());
                 logger.info("Starting conductor server using redis_cluster.");
                 break;
+            case REDIS_SENTINEL:
+                modules.add(new RedisSentinelModule());
+                modules.add(new RedisWorkflowModule());
+                logger.info("Starting conductor server using redis_sentinel.");
+                break;
         }
 
-        modules.add(new ElasticSearchV5Module());
+        modules.add(new ElasticSearchModule());
+
+        modules.add(new WorkflowExecutorModule());
 
         if (configuration.getJerseyEnabled()) {
             modules.add(new JerseyModule());
