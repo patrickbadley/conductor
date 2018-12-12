@@ -4,7 +4,7 @@ services:
   conductor-server:
     environment:
       - CONFIG_PROP=config.properties
-    image: patrickbadley/netflix-conductor-server:2.0.1.1-rabbitmq
+    image: conductor:server
     build:
       context: ../
       dockerfile: docker/server/Dockerfile
@@ -26,7 +26,7 @@ services:
   conductor-ui:
     environment:
       - WF_SERVER=http://conductor-server:8080/api/
-    image: patrickbadley/netflix-conductor-ui:2.0.1.1-rabbitmq
+    image: conductor:ui
     build:
       context: ../
       dockerfile: docker/ui/Dockerfile
